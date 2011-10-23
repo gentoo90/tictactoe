@@ -1,0 +1,5 @@
+#!/bin/sh
+python tictactoe/manage.py syncdb --noinput
+python makeadmin.py
+mkdir -p /home/dotcloud/data/media /home/dotcloud/data/static
+python tictactoe/manage.py collectstatic --noinput
