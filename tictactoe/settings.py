@@ -20,9 +20,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql', # Add 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
         'OPTIONS': {'init_command': 'SET storage_engine=INNODB'},
-        'NAME': 'template1',                      # Or path to database file if using sqlite3.
-        'USER': env['DOTCLOUD_DB_MYSQL_LOGIN'],                      # Not used with sqlite3.
-        'PASSWORD': env['DOTCLOUD_DB_MYSQL_PASSWORD'],                  # Not used with sqlite3.
+        'NAME': 'tictactoe',                      # Or path to database file if using sqlite3.
+        'USER': 'tictactoe',                      # Not used with sqlite3.
+        'PASSWORD': 'django',                  # Not used with sqlite3.
         'HOST': env['DOTCLOUD_DB_MYSQL_HOST'],                      # Set to empty string for localhost. Not used with sqlite3.
         'PORT': int(env['DOTCLOUD_DB_MYSQL_PORT']),                      # Set to empty string for default. Not used with sqlite3.
     }
