@@ -3,7 +3,7 @@ import json
 
 # Django settings for tictactoe project.
 
-PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+PROJECT_PATH = os.path.realpath(os.path.dirname(__file__)) + '/'
 
 with open(PROJECT_PATH + '../../environment.json') as f:
     env = json.load(f)
