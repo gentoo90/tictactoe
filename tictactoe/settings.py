@@ -1,11 +1,12 @@
 import os.path
 import json
-with open('/home/dotcloud/environment.json') as f:
-    env = json.load(f)
 
 # Django settings for tictactoe project.
 
 PROJECT_PATH = os.path.realpath(os.path.dirname(__file__))
+
+with open(PROJECT_PATH + '../../environment.json') as f:
+    env = json.load(f)
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
