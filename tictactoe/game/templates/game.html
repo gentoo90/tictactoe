@@ -12,7 +12,7 @@
         for(i=1;i<=9;i++){
             cells['c'+i.toString()]=0;
         }
-        alert(cells['c6']);
+        //alert(cells['c6']);
         // Enable pusher logging - don't include this in production
         Pusher.log = function(message) {
             if (window.console && window.console.log) window.console.log(message);
@@ -24,14 +24,19 @@
         var pusher = new Pusher('{{ KEY }}');
         var channel = pusher.subscribe('turn_{{ enemy }}');
         channel.bind('turn_is_done', function(data) {
-            $('div#chat').append('<div class="message">'+data+'</div>');
+            //$('div#chat').append('<div class="message">'+data+'</div>');
+            //alert(data);
+            $('.cell#'+data).attr('value','{{ enemy }}')
         });
 
         $("input.cell").click(function (){
             $.ajax({
                 url:  '/turn/{{ me }}/',
                 type: 'POST',
-                data: {cell: $(this).attr('id')}
+                data: {cell: $(this).attr('id')},
+                success: function (data, textStatus, jqXHR){
+                    $('.cell#'+data).attr('value','{{ me }}');
+                }
             });//.done();
         });
 
@@ -42,13 +47,16 @@
             resetForm: true,
             success: function(responseText, statusText, xhr, $form){
                 window.console.log("AJAX: "+responseText);
-                //$("form").resetForm();
+                alert(responseText);
+                $('.cell#'+responseText).attr('value','{{ me }}');
             }
         });
     });
-    </script></head>
+    </script>
+</head>
 <body>
 <h1>Tic-Tac-Toe</h1>
+<h2>Player {{ me }}</h2>
 <form id="sender" action="send/" method="POST">
 <table>
     <tr>
