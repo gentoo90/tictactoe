@@ -7,10 +7,15 @@
     <script src="http://js.pusherapp.com/1.9/pusher.min.js" type="text/javascript"></script>
     <script type="text/javascript">
     var cells = new Array();
+    var turn = 'x';
     $(document).ready(function(){
 
         for(i=1;i<=9;i++){
             cells['c'+i.toString()]=0;
+        }
+
+        if(turn != '{{ me }}') {
+            $('.unchecked').attr('disabled','disabled');
         }
         //alert(cells['c6']);
         // Enable pusher logging - don't include this in production
@@ -26,7 +31,8 @@
         channel.bind('turn_is_done', function(data) {
             //$('div#chat').append('<div class="message">'+data+'</div>');
             //alert(data);
-            $('.cell#'+data).attr('value','{{ enemy }}')
+            $('.cell#'+data).attr('value','{{ enemy }}').removeClass('unchecked');
+            $('.unchecked').removeAttr('disabled');
         });
 
         $("input.cell").click(function (){
@@ -35,7 +41,8 @@
                 type: 'POST',
                 data: {cell: $(this).attr('id')},
                 success: function (data, textStatus, jqXHR){
-                    $('.cell#'+data).attr('value','{{ me }}');
+                    $('.cell#'+data).attr('value','{{ me }}').removeClass('unchecked');
+                    $('.cell').attr('disabled','disabled');
                 }
             });//.done();
         });
@@ -44,12 +51,12 @@
             url: "/turn/{{ me }}/",
             type: 'POST',
             dataType: 'json',
-            resetForm: true,
+            resetForm: true/*,
             success: function(responseText, statusText, xhr, $form){
                 window.console.log("AJAX: "+responseText);
                 alert(responseText);
-                $('.cell#'+responseText).attr('value','{{ me }}');
-            }
+                $('.cell#'+responseText).attr('value','{{ me }}').attr('disabled','disabled');
+            }*/
         });
     });
     </script>
@@ -60,19 +67,19 @@
 <form id="sender" action="send/" method="POST">
 <table>
     <tr>
-        <td class="cell" id="c1"><input class="cell" id="c1" type="button" /></td>
-        <td class="cell" id="c2"><input class="cell" id="c2" type="button" /></td>
-        <td class="cell" id="c3"><input class="cell" id="c3" type="button" /></td>
+        <td class="cell" id="c1"><input class="cell unchecked" id="c1" type="button" /></td>
+        <td class="cell" id="c2"><input class="cell unchecked" id="c2" type="button" /></td>
+        <td class="cell" id="c3"><input class="cell unchecked" id="c3" type="button" /></td>
     </tr>
     <tr>
-        <td class="cell" id="c4"><input class="cell" id="c4" type="button" /></td>
-        <td class="cell" id="c5"><input class="cell" id="c5" type="button" /></td>
-        <td class="cell" id="c6"><input class="cell" id="c6" type="button" /></td>
+        <td class="cell" id="c4"><input class="cell unchecked" id="c4" type="button" /></td>
+        <td class="cell" id="c5"><input class="cell unchecked" id="c5" type="button" /></td>
+        <td class="cell" id="c6"><input class="cell unchecked" id="c6" type="button" /></td>
     </tr>
     <tr>
-        <td class="cell" id="c7"><input class="cell" id="c7" type="button" /></td>
-        <td class="cell" id="c8"><input class="cell" id="c8" type="button" /></td>
-        <td class="cell" id="c9"><input class="cell" id="c9" type="button" /></td>
+        <td class="cell" id="c7"><input class="cell unchecked" id="c7" type="button" /></td>
+        <td class="cell" id="c8"><input class="cell unchecked" id="c8" type="button" /></td>
+        <td class="cell" id="c9"><input class="cell unchecked" id="c9" type="button" /></td>
     </tr>
 </table>
 </form>
