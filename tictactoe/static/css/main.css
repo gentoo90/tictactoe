@@ -1,0 +1,46 @@
+body{
+    background: none repeat scroll 0 0 #FFCC99;
+}
+
+input{
+	width: 50px;
+	height: 50px;
+	border-radius: 0.5em 0.2em 0.5em 0.2em;
+	border-style: solid;
+	border-width: 1px;
+	font-weight: bold;
+	font-size: 2em;
+	text-align: center;
+	color: #FFFFFF;
+	padding-bottom: 9px;
+	text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+	box-shadow: 5px 5px 3px 0 rgba(0, 0, 0, 0.5);
+}
+
+input.unchecked{
+	background: -moz-linear-gradient(center top , #D5DB40 0%, #AF9400 100%) repeat scroll 0 0 transparent;
+	border-color: #D0B003 #CBB006 #CBB010;
+}
+
+input.unchecked:hover{
+	background: -moz-linear-gradient(center top , #F5FB40 0%, #CF9400 100%) repeat scroll 0 0 transparent;
+}
+
+
+input.cellx{
+	background: -moz-linear-gradient(center top , #A5DB40 0%, #3F9300 100%) repeat scroll 0 0 transparent;
+	border-color: #4F9023 #2B6006 #2B6006;
+}
+
+input.cellx:hover{
+	background: -moz-linear-gradient(center top , #B5FB40 0%, #4FA300 100%) repeat scroll 0 0 transparent;
+}
+
+input.cello{
+	background: -moz-linear-gradient(center top , #DBA540 0%, #933F00 100%) repeat scroll 0 0 transparent;
+	border-color: #904F23 #602B06 #602B06;
+}
+
+input.cello:hover{
+	background: -moz-linear-gradient(center top , #FBB540 0%, #A34F00 100%) repeat scroll 0 0 transparent;
+}
