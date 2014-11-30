@@ -1,12 +1,14 @@
+<!DOCTYPE html>
 <html>
 <head>
     <title>Tic-Tac-Toe</title>
     <link href="/static/css/main.css" rel="stylesheet" type="text/css" />
     <script src="/static/js/jquery-1.6.4.min.js" type="text/javascript"></script>
     <script src="/static/js/jquery.form.js" type="text/javascript"></script>
-    <script src="http://js.pusherapp.com/1.9/pusher.min.js" type="text/javascript"></script>
+    <!-- <script src="/static/js/sockjs.min.js" type="text/javascript"></script> -->
+    <script src="/static/js/centrifuge.min.js" type="text/javascript"></script>
     <script type="text/javascript">
-    var cells = new Array();
+    var cells = [];
     var turn = 'x';
 
     function valOf(cell){
@@ -22,33 +24,36 @@
         if(turn != '{{ me }}') {
             $('.unchecked').attr('disabled','disabled');
         }
-        //alert(cells['c6']);
-        // Enable pusher logging - don't include this in production
-        Pusher.log = function(message) {
-            if (window.console && window.console.log) window.console.log(message);
-        };
 
-        // Flash fallback logging - don't include this in production
-        WEB_SOCKET_DEBUG = true;
-
-        var pusher = new Pusher('{{ KEY }}');
-        var channel = pusher.subscribe('turn_{{ enemy }}');
-        channel.bind('turn_is_done', function(data) {
-            $('input#'+data).attr('value','{{ enemy }}').removeClass('unchecked').addClass('cell{{ enemy }}');
-            //alert(valOf(1));
-            if(valOf(1)==valOf(2) && valOf(2)==valOf(3) && valOf(3)=='{{ enemy }}' ||
-            valOf(4)==valOf(5) && valOf(5)==valOf(6) && valOf(6)=='{{ enemy }}' ||
-            valOf(7)==valOf(8) && valOf(8)==valOf(9) && valOf(9)=='{{ enemy }}' ||
-            valOf(1)==valOf(4) && valOf(4)==valOf(7) && valOf(7)=='{{ enemy }}' ||
-            valOf(2)==valOf(5) && valOf(5)==valOf(8) && valOf(8)=='{{ enemy }}' ||
-            valOf(3)==valOf(6) && valOf(6)==valOf(9) && valOf(9)=='{{ enemy }}' ||
-            valOf(1)==valOf(5) && valOf(5)==valOf(9) && valOf(9)=='{{ enemy }}' ||
-            valOf(3)==valOf(5) && valOf(5)==valOf(7) && valOf(7)=='{{ enemy }}' ){
-                alert('YOU LOSE!');
-            }else{
-                $('.unchecked').removeAttr('disabled');
-            }
+        var centrifuge = new Centrifuge({
+            url: 'ws://localhost:8000/connection/websocket',
+            project: '{{ PROJECT_ID }}',
+            user: '{{ me }}',
+            timestamp: '{{ timestamp }}',
+            token: '{{ token }}',
         });
+
+        centrifuge.on('connect', function() {
+            console.log('connected');
+
+            var subscription = centrifuge.subscribe('turn_{{ enemy }}', function(message) {
+                $('input#'+message.data).attr('value','{{ enemy }}').removeClass('unchecked').addClass('cell{{ enemy }}');
+
+                if(valOf(1)==valOf(2) && valOf(2)==valOf(3) && valOf(3)=='{{ enemy }}' ||
+                valOf(4)==valOf(5) && valOf(5)==valOf(6) && valOf(6)=='{{ enemy }}' ||
+                valOf(7)==valOf(8) && valOf(8)==valOf(9) && valOf(9)=='{{ enemy }}' ||
+                valOf(1)==valOf(4) && valOf(4)==valOf(7) && valOf(7)=='{{ enemy }}' ||
+                valOf(2)==valOf(5) && valOf(5)==valOf(8) && valOf(8)=='{{ enemy }}' ||
+                valOf(3)==valOf(6) && valOf(6)==valOf(9) && valOf(9)=='{{ enemy }}' ||
+                valOf(1)==valOf(5) && valOf(5)==valOf(9) && valOf(9)=='{{ enemy }}' ||
+                valOf(3)==valOf(5) && valOf(5)==valOf(7) && valOf(7)=='{{ enemy }}' ){
+                    alert('YOU LOSE!');
+                }else{
+                    $('.unchecked').removeAttr('disabled');
+                }
+            });
+        });
+        centrifuge.connect();
 
         $("input.cell").click(function (){
             $.ajax({
@@ -69,55 +74,50 @@
                         alert('YOU WIN!');
                     }
                 }
-            });//.done();
+            });
         });
 
         $("form#sender").ajaxForm({
             url: "/turn/{{ me }}/",
             type: 'POST',
             dataType: 'json',
-            resetForm: true/*,
-            success: function(responseText, statusText, xhr, $form){
-                window.console.log("AJAX: "+responseText);
-                alert(responseText);
-                $('.cell#'+responseText).attr('value','{{ me }}').attr('disabled','disabled');
-            }*/
+            resetForm: true
         });
     });
     </script>
 </head>
 <body>
-<h1 align="center">Tic-Tac-Toe</h1>
-<h2 align="center">Player {{ me }}</h2>
-<div align="center">
-<form id="sender" action="send/" method="POST">
-<table>
-    <tr>
-        <td class="cell" id="c1"><input class="cell unchecked" id="c1" type="button" /></td>
-        <td class="cell" id="c2"><input class="cell unchecked" id="c2" type="button" /></td>
-        <td class="cell" id="c3"><input class="cell unchecked" id="c3" type="button" /></td>
-    </tr>
-    <tr>
-        <td class="cell" id="c4"><input class="cell unchecked" id="c4" type="button" /></td>
-        <td class="cell" id="c5"><input class="cell unchecked" id="c5" type="button" /></td>
-        <td class="cell" id="c6"><input class="cell unchecked" id="c6" type="button" /></td>
-    </tr>
-    <tr>
-        <td class="cell" id="c7"><input class="cell unchecked" id="c7" type="button" /></td>
-        <td class="cell" id="c8"><input class="cell unchecked" id="c8" type="button" /></td>
-        <td class="cell" id="c9"><input class="cell unchecked" id="c9" type="button" /></td>
-    </tr>
-</table>
-</form>
-</div>
-<div align="center">
-Powered by:
-<ul>
-<li><a href="https://www.djangoproject.com/">Django</a></li>
-<li><a href="http://jquery.com/">JQuery</a></li>
-<li><a href="https://www.dotcloud.com/">DotCloud</a></li>
-<li><a href="http://pusher.com/">Pusher</a></li>
-</ul>
-</div>
+    <h1 align="center">Tic-Tac-Toe</h1>
+    <h2 align="center">Player {{ me }}</h2>
+    <div align="center">
+        <form id="sender" action="send/" method="POST">
+        <table>
+            <tr>
+                <td class="cell" id="c1"><input class="cell unchecked" id="c1" type="button" /></td>
+                <td class="cell" id="c2"><input class="cell unchecked" id="c2" type="button" /></td>
+                <td class="cell" id="c3"><input class="cell unchecked" id="c3" type="button" /></td>
+            </tr>
+            <tr>
+                <td class="cell" id="c4"><input class="cell unchecked" id="c4" type="button" /></td>
+                <td class="cell" id="c5"><input class="cell unchecked" id="c5" type="button" /></td>
+                <td class="cell" id="c6"><input class="cell unchecked" id="c6" type="button" /></td>
+            </tr>
+            <tr>
+                <td class="cell" id="c7"><input class="cell unchecked" id="c7" type="button" /></td>
+                <td class="cell" id="c8"><input class="cell unchecked" id="c8" type="button" /></td>
+                <td class="cell" id="c9"><input class="cell unchecked" id="c9" type="button" /></td>
+            </tr>
+        </table>
+        </form>
+    </div>
+    <div align="center">
+    Powered by:
+        <ul>
+            <li><a href="https://www.djangoproject.com/">Django</a></li>
+            <li><a href="http://jquery.com/">JQuery</a></li>
+            <li><a href="https://www.dotcloud.com/">DotCloud</a></li>
+            <li><a href="http://pusher.com/">Pusher</a></li>
+        </ul>
+    </div>
 </body>
 </html>
